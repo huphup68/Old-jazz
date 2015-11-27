@@ -80,37 +80,46 @@ import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
 
 public class TheUI extends JFrame {
+
+	// Variable declaration
 	private JTextField txtFuelType;
 	private JTextField txtEmailAdress;
 	private JPasswordField pwdSave;
 	private JTable table;
 	private Car[] compareArray = { null, null, null };
+	// Dropdown menues used to select seach criteria
 	private JComboBox comboBox;
 	private JComboBox comboBox_1;
 	private JComboBox comboBox_2;
 	private JComboBox comboBox_3;
+
 	private Cardata cardata;
 	private CarQuaries print;
 	private int row = 0;
 	private int column = 0;
 	private DBConnection connection;
+	// Strings used to store filters
 	private String sqlLocation = "";
 	private String sqlModel = "";
 	private String sqlYear = "";
 	private String sqlBrand= "" ;
 	private String sqlFilter = "";
+	// Checkboxes used to determine search criteria
 	private JCheckBox chckbxDiesel;
     private JCheckBox chckbxBensin; 
 	private JCheckBox chckbxElectrical;
 	private JCheckBox chckbxManual;
 	private JCheckBox chckbxAutomatic;
+
     private JTextPane txtpnGearBox;
 	private JScrollPane scroll;
 	private FillBoxes boxes;
+	// Lists used to fill and update the dropdown menues
 	private ArrayList <String>brandName;
 	private ArrayList <String>modelName;
 	private ArrayList <String>locationName;
 	private ArrayList <Integer>yearList;
+	// Variables related to user accounts
 	private JButton btnAdminAccess;
 	private CreateAccount work;
 	private String userName;
@@ -154,7 +163,7 @@ public class TheUI extends JFrame {
 		conn=connection.getConn();
 		
 		boxes = new FillBoxes();
-		
+		// Initiallization of ArrayLists	
 		brandName = new ArrayList<>();
 		brandName = boxes.getBrand();
 		modelName = new ArrayList<>();
@@ -165,7 +174,7 @@ public class TheUI extends JFrame {
 		locationName = boxes.getLocation();
 		
 		
-		
+		// Dropdown menu for selecting the location
 		comboBox = new JComboBox();
 		comboBox.setBounds(10, 20, 119, 27);
 		comboBox.addItem("Location");
@@ -182,7 +191,7 @@ public class TheUI extends JFrame {
 		});
 
 			
-
+		// Dropdown menu for selecting the brand
 		comboBox_1 = new JComboBox();
 		comboBox_1.setBounds(10, 50, 119, 27);
 		comboBox_1.addItem("Brand");
@@ -197,6 +206,7 @@ public class TheUI extends JFrame {
 			}
 		});
 
+		// Dropdown menu for selecting the model
 		comboBox_2 = new JComboBox();
 		comboBox_2.setBounds(10, 80, 119, 27);
 		comboBox_2.addItem("Model");
@@ -211,6 +221,7 @@ public class TheUI extends JFrame {
 			}
 		});
 
+		// Dropdown menu for selecting the year
 		comboBox_3 = new JComboBox();
 		comboBox_3.setBounds(10, 110, 119, 27);
 		comboBox_3.addItem("Year");
@@ -287,6 +298,7 @@ public class TheUI extends JFrame {
 		pwdSave.setBounds(914, 78, 134, 28);
 		getContentPane().add(pwdSave);
 
+		// Search button
 		JButton btnNewButton = new JButton("Search Car");
 		btnNewButton.setBackground(Color.BLUE);
 		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
@@ -297,23 +309,29 @@ public class TheUI extends JFrame {
 			if (table.isVisible() == false) {
 					table.setVisible(true);
 				}
-				sqlFilter = ""; 
-				
-				String[] columnName = new String[3];
-				Cardata cardata = new Cardata();
+				sqlFilter = "";			// Variable where the querry is saved
+				// Querry creation
+				String[] columnName = new String[3];		// Array used as the column header in our table
+				Cardata cardata = new Cardata();			// Object where all the relevant cars are stored
 				if(chckbxDiesel.isSelected()){
 					if(sqlFilter.isEmpty()){
 						sqlFilter+= " WHERE Fueltype = 'Diesel'";
 					}else
-					{sqlFilter += " AND Fueltype = 'Diesel'";
+					{
+						sqlFilter += " AND Fueltype = 'Diesel'";
 				    }
 				}
-				if(chckbxBensin.isSelected()){
-					if(chckbxBensin.isSelected()){
-					sqlFilter += " WHERE Fueltype = 'Bensin'";
-				}else{
-					sqlFilter += " AND Fueltype = 'Bensin'";
-				    }
+				if(chckbxBensin.isSelected())
+				{
+					if(chckbxBensin.isSelected())
+					{
+						sqlFilter += " WHERE Fueltype = 'Bensin'";
+					}
+					else
+					{
+					
+						sqlFilter += " AND Fueltype = 'Bensin'";
+					}
 				}
 				if(chckbxElectrical.isSelected()){
 					if(sqlFilter.isEmpty()){
@@ -325,7 +343,8 @@ public class TheUI extends JFrame {
 				if(chckbxManual.isSelected()){
 					if(sqlFilter.isEmpty()){
 						sqlFilter += " WHERE Gearbox = 'Manual'";
-					}else{
+					}
+					else{
 						sqlFilter += " AND Gearbox = 'Manual'";
 					}
 				}
@@ -373,8 +392,9 @@ public class TheUI extends JFrame {
 				{
 					sqlFilter = "";
 					
-				}	
-				Object [][] data = updateUITable("SELECT * FROM Carrunner"+sqlFilter, columnName);
+				}
+
+				Object [][] data = updateUITable("SELECT * FROM Carrunner"+sqlFilter, columnName); // Creates table using the updateUITable method which takes the querry as an input
 				table.addMouseListener(new MouseAdapter() {
 					@SuppressWarnings("deprecation")
 					public void mouseClicked(MouseEvent e) {
@@ -544,8 +564,8 @@ public class TheUI extends JFrame {
 		lblNewLabel.setVisible(false);
 		setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{getContentPane(), comboBox, comboBox_1, comboBox_2, comboBox_3, chckbxDiesel, chckbxBensin, chckbxElectrical, chckbxManual, chckbxAutomatic, txtpnGearBox, txtFuelType, txtEmailAdress, btnCreateAccount, pwdSave, btnNewButton, btnLogin, btnAdminAccess}));
 		btnLogout.setVisible(false);
-//		final Cardata cdata = new Cardata(cardata);
-//
+
+
 		
 
 		// admin access page below !
@@ -656,30 +676,32 @@ public class TheUI extends JFrame {
 		});
 	}
 
-	  private Object [][] updateUITable(String sqlString, String[] strArr)
-	    {
-	    	System.out.println("SQL query = '" + sqlString + "'");
-	    	CarQuaries print = new CarQuaries();
-			cardata = print.query(sqlString, connection);
-			Object [][] data;
+	// Method that creates a new table based on an SQL querry
+	private Object [][] updateUITable(String sqlString, String[] strArr)
+	{
+	    System.out.println("SQL query = '" + sqlString + "'");
+	    CarQuaries print = new CarQuaries();
+		cardata = print.query(sqlString, connection);
+		Object [][] data;
 
-			String [] preview = new String [cardata.getArrayList().size()];
-			for (int i = 0; i < cardata.getArrayList().size(); i++){
-				preview[i] = cardata.getArrayList().get(i).toString();
-			}
+		String [] preview = new String [cardata.getArrayList().size()];
+		for (int i = 0; i < cardata.getArrayList().size(); i++){
+			preview[i] = cardata.getArrayList().get(i).toString();
+		}
 			
 
 			
-			String[] columnName = {"Model", "Location", "Price" , "Emissions", "Speed"};
-			data = new Object[cardata.getArrayList().size()][5];
-			for (int i = 0; i<cardata.getArrayList().size(); i++){
-				data [i][0] = cardata.getArrayList().get(i).getBrand() +" "+ cardata.getArrayList().get(i).getModel();
-				data [i][1] = cardata.getArrayList().get(i).getLocation();
-				data [i][2] = cardata.getArrayList().get(i).getPrice() + " SEK"; 
-				data[i][3] = cardata.getArrayList().get(i).getEmissions() +  "CO2";
-				data[i][4] = cardata.getArrayList().get(i).getTopspeed() + "KM/H";
-				//data[i][5] = false;
-			}
+		String[] columnName = {"Model", "Location", "Price" , "Emissions", "Speed"};
+		data = new Object[cardata.getArrayList().size()][5];			// Two dimesional array later used to populate table
+		// Loop used to assign values to the two dimesional array
+		for (int i = 0; i<cardata.getArrayList().size(); i++){
+			data[i][0] = cardata.getArrayList().get(i).getBrand() +" "+ cardata.getArrayList().get(i).getModel();
+			data[i][1] = cardata.getArrayList().get(i).getLocation();
+			data[i][2] = cardata.getArrayList().get(i).getPrice() + " SEK"; 
+			data[i][3] = cardata.getArrayList().get(i).getEmissions() +  "CO2";
+			data[i][4] = cardata.getArrayList().get(i).getTopspeed() + "KM/H";
+			
+		}
 			
 //			DefaultTableModel model = new DefaultTableModel(data, columnName) {
 //			
@@ -703,31 +725,33 @@ public class TheUI extends JFrame {
 //							}
 //						}
 //					};
-//			
-			if(scroll != null)
-			{
-				getContentPane().remove(scroll);
-			}
-			if(table != null)
-			{
-			   getContentPane().remove(table);
-			}
-			table = new JTable(data, columnName);
-			table.setBounds(300, 50, 700, 700);
-			getContentPane().add(table);
-			table.setPreferredScrollableViewportSize(new Dimension(500,50));
-			table.setFillsViewportHeight(true);
+//		// Used to remove the old components
+		if(scroll != null)
+		{
+			getContentPane().remove(scroll);
+		}
+		// Used to remove the old components
+		if(table != null)
+		{
+		   getContentPane().remove(table);
+		}
+		// Table that will display search results for the user
+		table = new JTable(data, columnName);
+		table.setBounds(300, 50, 700, 700);
+		getContentPane().add(table);
+		table.setPreferredScrollableViewportSize(new Dimension(500,50));
+		table.setFillsViewportHeight(true);
 
-			scroll = new JScrollPane(table);
-			scroll.setSize(700, 500);
-			scroll.setLocation(150, 30);
-			getContentPane().add(scroll);
+		scroll = new JScrollPane(table);
+		scroll.setSize(700, 500);
+		scroll.setLocation(150, 30);
+		getContentPane().add(scroll);
 			
-			return data;
-	    }
+		return data;
+	}
 	
 	
-	
+	// Method used to display details about selected car
 	public void createWindow() {
 
 		JFrame window = new JFrame("JScrollbar");
@@ -763,6 +787,7 @@ public class TheUI extends JFrame {
 			}
 		});
 
+		// Button used to add a car to the list of cars that they want to compare
 		JButton addtocomparing = new JButton();
 		addtocomparing.setSize(160, 50);
 		addtocomparing.setLocation(40, 300);
@@ -771,6 +796,7 @@ public class TheUI extends JFrame {
 		window.getContentPane().add(addtocomparing);
 		addtocomparing.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Enables thee user to add up to 3 unique cars which they wis to compare
 				for (int i = 0; i < 3; i++) {
 					int j = 0;
 					if (compareArray[0] == cardata.getArrayList().get(row)
@@ -780,6 +806,7 @@ public class TheUI extends JFrame {
 					} else if (compareArray[i] == null) {
 						compareArray[i] = cardata.getArrayList().get(row);
 						System.out.println(compareArray[i]);
+						// Makes the comparison window available once atleast two cars have been selected
 						if (i > 0) {
 							compare.setVisible(true);
 						}
@@ -799,12 +826,14 @@ public class TheUI extends JFrame {
 			window.setVisible(true);
 			window.setBounds(200, 100, 700, 500);
 			
-			String path;
 
+			String path;		// String representaion of the URL that leads to a picture of the selected car
+
+			// If there is no URL the picture is set to a default
 			if (cardata.getArrayList().get(row).getImage() == null) {
 				path = "http://www.carechartsuk.co.uk/wp-content/uploads/2015/09/NO-IMAGE-AVAILABLE-ICON-web1.jpg";
 			} else {
-				path = cardata.getArrayList().get(row).getImage();
+				path = cardata.getArrayList().get(row).getImage();		// path is set to the URL stored in the database for the selected car
 			}
 
 			System.out.println("Get Image from " + path);
@@ -828,6 +857,7 @@ public class TheUI extends JFrame {
 
 	}
 
+	// Method used to create the window which allows the user to compare up to three selected cars at once
 	public void compareWindow() {
 
 		JFrame window = new JFrame("JScrollbar");
@@ -875,6 +905,7 @@ public class TheUI extends JFrame {
 
 	}
 	
+	// Methods used to get the selected selected search criteria of the dropdown menues
 	void yearsBox()
 	{
 		if(comboBox_3.getSelectedIndex() != 0)
@@ -899,6 +930,7 @@ public class TheUI extends JFrame {
 		{
 			sqlBrand = "";
 		}
+		// Makes the selection of a model possible only one a brand has been selected
 		if(brandsBox.getSelectedIndex() != 0)
 		{
 				String tmpBrand = boxes.getBrand().get(brandsBox.getSelectedIndex()-1);
@@ -916,8 +948,7 @@ public class TheUI extends JFrame {
 					comboBox_2.addItem(modelName.get(i));
 				}
 				comboBox_2.enable();
-//				sqlModel = modelName.get(brandsBox.getSelectedIndex());
-//				sqlModel = " Model='"+sqlModel +"'";
+
 			
 			}  
 		else{
