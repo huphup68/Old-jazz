@@ -1,0 +1,958 @@
+package UI;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import javax.swing.JTextField;
+import java.awt.Button;
+import java.awt.TextField;
+import javax.swing.JScrollBar;
+import javax.swing.JTable;
+import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
+import javax.swing.JTextPane;
+import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.JTree;
+import javax.swing.JWindow;
+import javax.swing.JToggleButton;
+import javax.swing.JList;
+import javax.swing.JEditorPane;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Random;
+import java.awt.Font;
+import java.awt.Image;
+
+import javax.swing.JRadioButton;
+import javax.swing.JToolBar;
+import javax.swing.JDesktopPane;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+
+import javax.swing.JProgressBar;
+import java.awt.Color;
+import javax.swing.SwingConstants;
+import javax.swing.Box;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JTextArea;
+import java.awt.Panel;
+import java.awt.Choice;
+import java.awt.TextArea;
+import java.awt.Scrollbar;
+
+import javax.imageio.ImageIO;
+import javax.swing.AbstractListModel;
+import java.awt.ScrollPane;
+import java.awt.List;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+
+import java.awt.Window.Type;
+import javax.swing.border.BevelBorder;
+import javax.swing.ListSelectionModel;
+
+public class TheUI extends JFrame {
+	private JTextField txtFuelType;
+	private JTextField txtEmailAdress;
+	private JPasswordField pwdSave;
+	private JTable table;
+	private Car[] compareArray = { null, null, null };
+	private JComboBox comboBox;
+	private JComboBox comboBox_1;
+	private JComboBox comboBox_2;
+	private JComboBox comboBox_3;
+	private Cardata cardata;
+	private CarQuaries print;
+	private int row = 0;
+	private int column = 0;
+	private DBConnection connection;
+	private String sqlLocation = "";
+	private String sqlModel = "";
+	private String sqlYear = "";
+	private String sqlBrand= "" ;
+	private String sqlFilter = "";
+	private JCheckBox chckbxDiesel;
+    private JCheckBox chckbxBensin; 
+	private JCheckBox chckbxElectrical;
+	private JCheckBox chckbxManual;
+	private JCheckBox chckbxAutomatic;
+    private JTextPane txtpnGearBox;
+	private JScrollPane scroll;
+	private FillBoxes boxes;
+	private ArrayList <String>brandName;
+	private ArrayList <String>modelName;
+	private ArrayList <String>locationName;
+	private ArrayList <Integer>yearList;
+	private JButton btnAdminAccess;
+	private CreateAccount work;
+	private String userName;
+	private JLabel lblNewLabel;
+	
+	/**
+	 * Launch the application.
+	 */
+	Connection conn = null;
+	public static void main(String[] args) {
+
+		JFrame frame = null;
+
+		EventQueue.invokeLater(new Runnable() {
+
+			public void run() {
+
+				try {
+					TheUI frame = new TheUI();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public TheUI() {
+		setTitle("Car Runner");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setFont(new Font("Lucida Grande", Font.BOLD | Font.ITALIC, 16));
+		getContentPane().setLayout(null);
+		setSize(new Dimension(1100, 650));
+		setBounds(getBounds());
+		connection = new DBConnection();
+		table = new JTable();
+		conn=connection.getConn();
+		
+		boxes = new FillBoxes();
+		
+		brandName = new ArrayList<>();
+		brandName = boxes.getBrand();
+		modelName = new ArrayList<>();
+		modelName = boxes.getModel();
+		yearList = new ArrayList<>();
+		yearList = boxes.getYear();
+		locationName = new ArrayList<>();
+		locationName = boxes.getLocation();
+		
+		
+		
+		comboBox = new JComboBox();
+		comboBox.setBounds(10, 20, 119, 27);
+		comboBox.addItem("Location");
+		getContentPane().add(comboBox);
+		for (int i = 0; i < boxes.getLocation().size(); i++) {
+
+			comboBox.addItem(boxes.getLocation().get(i));
+		}
+		
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				locationsBox(comboBox);
+			}
+		});
+
+			
+
+		comboBox_1 = new JComboBox();
+		comboBox_1.setBounds(10, 50, 119, 27);
+		comboBox_1.addItem("Brand");
+		getContentPane().add(comboBox_1);
+		for (int i = 0; i < boxes.getBrand().size(); i++) {
+
+			comboBox_1.addItem(boxes.getBrand().get(i));
+		}
+		comboBox_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				brandsBox(comboBox_1);
+			}
+		});
+
+		comboBox_2 = new JComboBox();
+		comboBox_2.setBounds(10, 80, 119, 27);
+		comboBox_2.addItem("Model");
+		getContentPane().add(comboBox_2);
+		for (int i = 0; i < boxes.getModel().size(); i++) {
+
+			comboBox_2.addItem(boxes.getModel().get(i));
+		}
+		comboBox_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				comboBox(comboBox_2);
+			}
+		});
+
+		comboBox_3 = new JComboBox();
+		comboBox_3.setBounds(10, 110, 119, 27);
+		comboBox_3.addItem("Year");
+		getContentPane().add(comboBox_3);
+		for (int i = 0; i < boxes.getYear().size(); i++) {
+
+			comboBox_3.addItem(boxes.getYear().get(i));
+		}
+		comboBox_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				yearsBox();
+			}
+		});
+
+		chckbxDiesel = new JCheckBox("Diesel ");
+		chckbxDiesel.setBounds(6, 181, 128, 23);
+		getContentPane().add(chckbxDiesel);
+		
+		chckbxBensin = new JCheckBox("Bensin");
+		chckbxBensin.setBounds(6, 211, 128, 23);
+		getContentPane().add(chckbxBensin);
+
+		 chckbxElectrical = new JCheckBox("Electrical ");
+		chckbxElectrical.setBounds(6, 237, 128, 23);
+		getContentPane().add(chckbxElectrical);
+
+		 chckbxManual = new JCheckBox("Manual");
+		chckbxManual.setBounds(6, 281, 128, 23);
+		getContentPane().add(chckbxManual);
+
+		chckbxAutomatic = new JCheckBox("Automatic ");
+		chckbxAutomatic.setBounds(6, 305, 128, 23);
+		getContentPane().add(chckbxAutomatic);
+
+		 txtpnGearBox = new JTextPane();
+		txtpnGearBox.setEditable(false);
+		txtpnGearBox.setText(" Gear box");
+		txtpnGearBox.setBounds(6, 266, 76, 16);
+		getContentPane().add(txtpnGearBox);
+
+		txtFuelType = new JTextField();
+		txtFuelType.setEditable(false);
+		txtFuelType.setText("Fuel Type");
+		txtFuelType.setBounds(6, 153, 76, 29);
+		getContentPane().add(txtFuelType);
+		txtFuelType.setColumns(10);
+
+		txtEmailAdress = new JTextField();
+		txtEmailAdress.setText("Email adress");
+		txtEmailAdress.setBounds(914, 48, 134, 28);
+		getContentPane().add(txtEmailAdress);
+		txtEmailAdress.setColumns(10);
+
+		JButton btnCreateAccount = new JButton("Create Account");
+		btnCreateAccount.setBounds(928, 180, 128, 29);
+		getContentPane().add(btnCreateAccount);
+		
+		btnCreateAccount.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				work = null;
+				try {
+					work = new CreateAccount();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				work.newscreen();
+			}
+		});
+
+		pwdSave = new JPasswordField();
+		pwdSave.setText("save");
+		pwdSave.setBounds(914, 78, 134, 28);
+		getContentPane().add(pwdSave);
+
+		JButton btnNewButton = new JButton("Search Car");
+		btnNewButton.setBackground(Color.BLUE);
+		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			
+			if (table.isVisible() == false) {
+					table.setVisible(true);
+				}
+				sqlFilter = ""; 
+				
+				String[] columnName = new String[3];
+				Cardata cardata = new Cardata();
+				if(chckbxDiesel.isSelected()){
+					if(sqlFilter.isEmpty()){
+						sqlFilter+= " WHERE Fueltype = 'Diesel'";
+					}else
+					{sqlFilter += " AND Fueltype = 'Diesel'";
+				    }
+				}
+				if(chckbxBensin.isSelected()){
+					if(chckbxBensin.isSelected()){
+					sqlFilter += " WHERE Fueltype = 'Bensin'";
+				}else{
+					sqlFilter += " AND Fueltype = 'Bensin'";
+				    }
+				}
+				if(chckbxElectrical.isSelected()){
+					if(sqlFilter.isEmpty()){
+						sqlFilter += " WHERE Fueltype = 'Bensin'";
+					}else{
+						sqlFilter += " AND Fueltype = 'Bensin'";
+					}
+				}
+				if(chckbxManual.isSelected()){
+					if(sqlFilter.isEmpty()){
+						sqlFilter += " WHERE Gearbox = 'Manual'";
+					}else{
+						sqlFilter += " AND Gearbox = 'Manual'";
+					}
+				}
+				if (chckbxAutomatic.isSelected()){
+					if(sqlFilter.isEmpty()){
+						sqlFilter += " WHERE Gearbox = 'Auto'";
+						
+					}else{
+						sqlFilter += " AND Gearbox = 'Auto'";
+					}
+				}
+				if (!sqlLocation.isEmpty()) {
+					if (sqlFilter.isEmpty()) {
+						sqlFilter += " WHERE " + sqlLocation;
+					} else {
+						sqlFilter += " AND " + sqlLocation;
+					}
+				}
+				
+				if (!sqlBrand.isEmpty()) {
+					if (sqlFilter.isEmpty()) {
+						sqlFilter += " WHERE " + sqlBrand;
+					} else {
+						sqlFilter += " AND " + sqlBrand;
+					}
+				}
+				
+				if (!sqlYear.isEmpty()) {
+					if (sqlFilter.isEmpty()) {
+						sqlFilter += " WHERE " + sqlYear;
+					} else {
+						sqlFilter += " AND " + sqlYear;
+					}
+				}
+				
+				if (!sqlModel.isEmpty()) {
+					if (sqlFilter.isEmpty()) {
+						sqlFilter += " WHERE " + sqlModel;
+					} else {
+						sqlFilter += " AND " + sqlModel;
+					}
+				}
+				
+				if(sqlModel.isEmpty()&&sqlYear.isEmpty()&&sqlBrand.isEmpty()&&sqlLocation.isEmpty()&&!chckbxDiesel.isSelected()&&!chckbxBensin.isSelected()&&!chckbxManual.isSelected()&&chckbxAutomatic.isSelected())
+				{
+					sqlFilter = "";
+					
+				}	
+				Object [][] data = updateUITable("SELECT * FROM Carrunner"+sqlFilter, columnName);
+				table.addMouseListener(new MouseAdapter() {
+					@SuppressWarnings("deprecation")
+					public void mouseClicked(MouseEvent e) {
+
+						JTable target = (JTable) e.getSource();
+						row = target.getSelectedRow();
+						column = target.getSelectedColumn();
+						if (column == 0) {
+							createWindow();
+
+						}
+
+					}
+				});
+				
+			}
+		});
+		
+		
+		btnNewButton.setBounds(6, 357, 117, 38);
+		getContentPane().add(btnNewButton);
+
+		
+		btnAdminAccess = new JButton("Admin access");
+		btnAdminAccess.setBounds(939, 575, 117, 29);
+		getContentPane().add(btnAdminAccess);
+		
+		
+	
+		JButton btnLogin = new JButton("login");
+		btnLogin.setBackground(Color.BLUE);
+		btnLogin.setBounds(939, 142, 117, 29);
+		getContentPane().add(btnLogin);
+		
+		btnLogin.addActionListener(new ActionListener() {
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				try {
+					String query = "SELECT * from Users WHERE User = ? and Password = ?";
+					PreparedStatement pst = conn.prepareStatement(query);
+					pst.setString(1, txtEmailAdress.getText());
+					pst.setString (2, pwdSave.getText());	
+					
+					ResultSet srs = pst.executeQuery();
+					int count = 0;
+					while (srs.next()) {
+						count = count + 1;
+						
+					} if (count == 1) {
+						userName = txtEmailAdress.getText();
+						JOptionPane.showMessageDialog(null, "Welcome " + userName);
+						lblNewLabel.setText(userName);
+						lblNewLabel.setVisible(true);
+						
+					} else if (count > 1) {
+						JOptionPane.showMessageDialog(null, "Duplicate username and password");
+					}  else {
+						JOptionPane.showMessageDialog(null, "username and password is not correct");
+					}
+					
+					
+					srs.close();
+					pst.close();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, e);
+				} finally {
+					try {
+
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, e);
+					}
+				}
+			}
+		});
+
+		
+		
+		
+		
+		
+		this.print = new CarQuaries();
+		this.cardata = new Cardata();
+		this.cardata = this.print.query("SELECT * FROM Carrunner", connection);
+		JCheckBox[] check = new JCheckBox[cardata.getArrayList().size()];
+		String[] preview = new String[cardata.getArrayList().size()];
+		for (int i = 0; i < cardata.getArrayList().size(); i++) {
+			preview[i] = cardata.getArrayList().get(i).toString();
+			check[i] = new JCheckBox();
+
+		}
+
+//		String[] columnName = { "Model", "Location", "Price", "Emissions ", "Speed", "Save this car" };
+//		Object[][] data = new Object[cardata.getArrayList().size()][6];
+//		for (int i = 0; i < cardata.getArrayList().size(); i++) {
+//			data[i][0] = cardata.getArrayList().get(i).getBrand() + " " + cardata.getArrayList().get(i).getModel();
+//			data[i][1] = cardata.getArrayList().get(i).getLocation();
+//			data[i][2] = cardata.getArrayList().get(i).getPrice() + " SEK";
+//			data[i][3] = cardata.getArrayList().get(i).getEmissions();
+//			data[i][4] = cardata.getArrayList().get(i).getTopspeed();
+//			data[i][5] = false;
+//
+//		}
+//
+//		DefaultTableModel model = new DefaultTableModel(data, columnName) {
+//
+//			private static final long serialVersionUID = 1L;
+//
+//			public Class<?> getColumnClass(int column) {
+//
+//				switch (column) {
+//				case 0:
+//					return String.class;
+//				case 1:
+//					return String.class;
+//				case 2:
+//					return Integer.class;
+//				case 3:
+//					return Integer.class;
+//				case 4:
+//					return Integer.class;
+//				default:
+//					return Boolean.class;
+//				}
+//			}
+//		};
+//
+//		table = new JTable(model);
+//		table.setAutoCreateRowSorter(true);
+//		table.getSelectedColumns();
+//		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//		table.setCellSelectionEnabled(true);
+//		table.setColumnSelectionAllowed(true);
+//		table.setBorder(new BevelBorder(BevelBorder.LOWERED, null, Color.LIGHT_GRAY, null, null));
+//		table.setBounds(300, 50, 700, 700);
+//
+//		getContentPane().add(table);
+//
+//		table.setPreferredScrollableViewportSize(new Dimension(1000, 100));
+//		table.setFillsViewportHeight(true);
+//
+//		JScrollPane scroll = new JScrollPane(table);
+//
+//		scroll.setSize(700, 500);
+//		scroll.setLocation(150, 30);
+//		getContentPane().add(scroll);
+
+		
+		
+		
+		
+		JButton btnFavorites = new JButton("Favorites ");
+		btnFavorites.setBounds(939, 109, 117, 29);
+		getContentPane().add(btnFavorites);
+		btnFavorites.setVisible(false);
+		
+		JButton btnLogout = new JButton("Logout");
+		btnLogout.setBounds(977, 7, 117, 29);
+		getContentPane().add(btnLogout);
+		
+		lblNewLabel = new JLabel(userName);
+		lblNewLabel.setBounds(863, 12, 119, 16);
+		getContentPane().add(lblNewLabel);
+		lblNewLabel.setVisible(false);
+		setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{getContentPane(), comboBox, comboBox_1, comboBox_2, comboBox_3, chckbxDiesel, chckbxBensin, chckbxElectrical, chckbxManual, chckbxAutomatic, txtpnGearBox, txtFuelType, txtEmailAdress, btnCreateAccount, pwdSave, btnNewButton, btnLogin, btnAdminAccess}));
+		btnLogout.setVisible(false);
+//		final Cardata cdata = new Cardata(cardata);
+//
+		
+
+		// admin access page below !
+		btnAdminAccess.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFrame frame1 = new JFrame();
+		 
+				if (txtEmailAdress.getText().equals("sarah") && pwdSave.getText().equals("hhhh")) {
+			    System.out.print("Admin access is now allowed!");
+			        frame1.setVisible(true);}
+				else {
+					 frame1.setVisible(false);
+				}
+				
+				frame1.setBounds(200, 200, 400, 400);
+				JPanel panel = new JPanel();
+				frame1.getContentPane().add(panel);
+
+				final JTextField brand = new JTextField("Brand", 5);
+				panel.add(brand);
+
+				final JTextField car = new JTextField("Car", 5);
+				panel.add(car);
+
+				final JTextField model = new JTextField("Model", 5);
+				panel.add(model);
+
+				final JTextField year = new JTextField("Year", 5);
+				panel.add(year);
+
+				final JTextField gearbox = new JTextField("Gear box", 5);
+				panel.add(gearbox);
+
+				final JTextField fueltype = new JTextField("Fuel type", 5);
+				panel.add(fueltype);
+
+				final JTextField price = new JTextField("Price", 5);
+				panel.add(price);
+
+				final JTextField power = new JTextField("Horse power", 5);
+				panel.add(power);
+
+				final JTextField emissions = new JTextField("Emissions", 5);
+				panel.add(emissions);
+
+				final JTextField topspeed = new JTextField("Top speed", 5);
+				panel.add(topspeed);
+
+				final JTextField location = new JTextField("Location", 5);
+				panel.add(location);
+
+				final JTextField imagelink = new JTextField("Image link", 5);
+				imagelink.setSize(100, 100);
+				panel.add(imagelink);
+
+				JButton button = new JButton("Save input");
+				panel.add(button);
+				final JLabel label = new JLabel();
+
+				panel.add(label);
+				label.setVisible(false);
+
+				button.addActionListener(new ActionListener() {
+					private String attributes;
+
+					public void actionPerformed(ActionEvent e) {
+
+					Connection c = null;
+					Statement stmt = null;
+						
+
+						try {
+
+							Class.forName("org.sqlite.JDBC");
+							c = DriverManager.getConnection("jdbc:sqlite:/Users/Sarah/Downloads/Biljakt-3");
+							c.setAutoCommit(false);
+							System.out.println("Opened database successfully");
+
+							stmt = c.createStatement();
+
+							String sql = "INSERT INTO Carrunner (Brand, Car, Model,Year, Gearbox, Fueltype,Price,Power,Emissions,Topspeed,Location, Image)"
+									+ "VALUES ( '" + brand.getText() + "'," + "'" + car.getText() + "'," + "'"
+									+ model.getText() + "'," + year.getText() + ",'" + gearbox.getText() + "'," + "'"
+									+ fueltype.getText() + "'," + price.getText() + "," + power.getText() + ","
+									+ emissions.getText() + "," + topspeed.getText() + ",'" + location.getText() + "'"
+									+ ",'" + imagelink.getText() + "')";
+
+							stmt.executeUpdate(sql);
+
+							label.setText("your input is successfully complete");
+							label.setVisible(true);
+
+							c.commit();
+						} catch (Exception d) {
+							d.printStackTrace();
+							label.setText("Enter the correct values please!");
+							label.setVisible(true);
+						}
+
+					}
+
+				});
+
+				
+			}
+			
+
+		});
+	}
+
+	  private Object [][] updateUITable(String sqlString, String[] strArr)
+	    {
+	    	System.out.println("SQL query = '" + sqlString + "'");
+	    	CarQuaries print = new CarQuaries();
+			cardata = print.query(sqlString, connection);
+			Object [][] data;
+
+			String [] preview = new String [cardata.getArrayList().size()];
+			for (int i = 0; i < cardata.getArrayList().size(); i++){
+				preview[i] = cardata.getArrayList().get(i).toString();
+			}
+			
+
+			
+			String[] columnName = {"Model", "Location", "Price" , "Emissions", "Speed"};
+			data = new Object[cardata.getArrayList().size()][5];
+			for (int i = 0; i<cardata.getArrayList().size(); i++){
+				data [i][0] = cardata.getArrayList().get(i).getBrand() +" "+ cardata.getArrayList().get(i).getModel();
+				data [i][1] = cardata.getArrayList().get(i).getLocation();
+				data [i][2] = cardata.getArrayList().get(i).getPrice() + " SEK"; 
+				data[i][3] = cardata.getArrayList().get(i).getEmissions() +  "CO2";
+				data[i][4] = cardata.getArrayList().get(i).getTopspeed() + "KM/H";
+				//data[i][5] = false;
+			}
+			
+//			DefaultTableModel model = new DefaultTableModel(data, columnName) {
+//			
+//						private static final long serialVersionUID = 1L;
+//			
+//						public Class<?> getColumnClass(int column) {
+//			
+//							switch (column) {
+//							case 0:
+//								return String.class;
+//							case 1:
+//								return String.class;
+//							case 2:
+//								return Integer.class;
+//							case 3:
+//								return Integer.class;
+//							case 4:
+//								return Integer.class;
+//							default:
+//								return Boolean.class;
+//							}
+//						}
+//					};
+//			
+			if(scroll != null)
+			{
+				getContentPane().remove(scroll);
+			}
+			if(table != null)
+			{
+			   getContentPane().remove(table);
+			}
+			table = new JTable(data, columnName);
+			table.setBounds(300, 50, 700, 700);
+			getContentPane().add(table);
+			table.setPreferredScrollableViewportSize(new Dimension(500,50));
+			table.setFillsViewportHeight(true);
+
+			scroll = new JScrollPane(table);
+			scroll.setSize(700, 500);
+			scroll.setLocation(150, 30);
+			getContentPane().add(scroll);
+			
+			return data;
+	    }
+	
+	
+	
+	public void createWindow() {
+
+		JFrame window = new JFrame("JScrollbar");
+		JTextArea text = new JTextArea();
+		text.setEditable(false);
+	
+		
+
+		final JButton compare = new JButton();
+		compare.setSize(100, 50);
+		compare.setLocation(100, 350);
+		compare.setText("Compare");
+		int j = 0;
+		for (int i = 0; i < 3; i++) {
+			if (compareArray[i] != null) {
+				j++;
+			}
+		}
+		if (j > 1) {
+			compare.setVisible(true);
+			System.out.println("Look here you: " + j);
+		}
+
+		else {
+			compare.setVisible(false);
+		}
+
+		window.getContentPane().add(compare);
+		compare.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				compareWindow();
+			}
+		});
+
+		JButton addtocomparing = new JButton();
+		addtocomparing.setSize(160, 50);
+		addtocomparing.setLocation(40, 300);
+		addtocomparing.setText("Add to compare");
+		addtocomparing.setVisible(true);
+		window.getContentPane().add(addtocomparing);
+		addtocomparing.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < 3; i++) {
+					int j = 0;
+					if (compareArray[0] == cardata.getArrayList().get(row)
+							|| compareArray[1] == cardata.getArrayList().get(row)
+							|| compareArray[2] == cardata.getArrayList().get(row)) {
+						break;
+					} else if (compareArray[i] == null) {
+						compareArray[i] = cardata.getArrayList().get(row);
+						System.out.println(compareArray[i]);
+						if (i > 0) {
+							compare.setVisible(true);
+						}
+						break;
+					} else if (i == 2) {
+						break;
+					}
+				}
+
+			}
+		});
+
+		try {
+			window.getContentPane().add(text);
+			window.setTitle("Car Runner ");
+			window.getContentPane().setLayout(null);
+			window.setVisible(true);
+			window.setBounds(200, 100, 700, 500);
+			
+			String path;
+
+			if (cardata.getArrayList().get(row).getImage() == null) {
+				path = "http://www.carechartsuk.co.uk/wp-content/uploads/2015/09/NO-IMAGE-AVAILABLE-ICON-web1.jpg";
+			} else {
+				path = cardata.getArrayList().get(row).getImage();
+			}
+
+			System.out.println("Get Image from " + path);
+			URL url = new URL(path);
+			BufferedImage image = ImageIO.read(url);
+			System.out.println("Load image into frame...");
+			JLabel label = new JLabel(new ImageIcon(image));
+			label.setVisible(true);
+			label.setBounds(250, 50, 600, 300);
+
+			text.setSize(250, 250);
+			text.setText(cardata.getArrayList().get(row).toString());
+			text.setLineWrap(true);
+			text.setWrapStyleWord(true);
+			text.setBackground(window.getBackground());
+
+			window.getContentPane().add(label);
+		} catch (Exception exp) {
+			exp.printStackTrace();
+		}
+
+	}
+
+	public void compareWindow() {
+
+		JFrame window = new JFrame("JScrollbar");
+
+		window.setTitle("Car Runner ");
+		window.setVisible(true);
+		window.setBounds(200, 100, 500, 500);
+
+		int j = 0;
+		for (int i = 0; i < 3; i++) {
+			if (compareArray[i] != null) {
+				j++;
+			}
+		}
+
+		String[] cName = { "Car", "Location", "Price", "Emissions", "Horse power", "Fuel type", "Top speed",
+				"Gear box" };
+		Object[][] cdata = new Object[j][8];
+		for (int i = 0; i < j; i++) {
+			cdata[i][0] = compareArray[i].getBrand() + " " + compareArray[i].getCarname();
+			cdata[i][1] = compareArray[i].getLocation();
+			cdata[i][2] = compareArray[i].getPrice() + " SEK";
+			cdata[i][3] = compareArray[i].getEmissions();
+			cdata[i][4] = compareArray[i].getHorsepower();
+			cdata[i][5] = compareArray[i].getFueltype();
+			cdata[i][6] = compareArray[i].getTopspeed();
+			cdata[i][7] = compareArray[i].getgearbox();
+
+		}
+
+		// this table below is the compare table the last one
+		JTable table = new JTable(cdata, cName);
+		table.setVisible(true);
+		window.getContentPane().add(new JScrollPane(table));
+		window.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				for (int i = 0; i < 3; i++) {
+					compareArray[i] = null;
+					e.getWindow().dispose();
+				}
+			}
+
+		});
+
+	}
+	
+	void yearsBox()
+	{
+		if(comboBox_3.getSelectedIndex() != 0)
+		{
+		sqlYear = String.valueOf(boxes.getYear().get(comboBox_3.getSelectedIndex()-1));
+		sqlYear = " Year = '"+sqlYear+"'";
+		
+		}
+		else
+		{
+			sqlYear = "";
+		}
+	}
+
+	void brandsBox(JComboBox brandsBox){
+		if(brandsBox.getSelectedIndex() != 0)
+		{
+			sqlBrand = boxes.getBrand().get(brandsBox.getSelectedIndex()-1);
+			sqlBrand = " Brand='"+sqlBrand+"'";
+		}
+		else
+		{
+			sqlBrand = "";
+		}
+		if(brandsBox.getSelectedIndex() != 0)
+		{
+				String tmpBrand = boxes.getBrand().get(brandsBox.getSelectedIndex()-1);
+				if(!tmpBrand.isEmpty())
+				{
+					if(!boxes.getModel().isEmpty())
+					{
+						boxes.getModel().clear();
+					}
+					modelName = boxes.getModel(tmpBrand);
+				}
+				comboBox_2.removeAllItems();
+				for(int i=0; i<modelName.size(); i++)
+				{
+					comboBox_2.addItem(modelName.get(i));
+				}
+				comboBox_2.enable();
+//				sqlModel = modelName.get(brandsBox.getSelectedIndex());
+//				sqlModel = " Model='"+sqlModel +"'";
+			
+			}  
+		else{
+			
+			comboBox_2.disable();
+			comboBox_2.setSelectedIndex(0);
+
+			sqlBrand = "";
+		}
+		comboBox_2.updateUI();
+	}
+
+	void locationsBox(JComboBox locationsBox){
+
+		if(locationsBox.getSelectedIndex()!= 0){
+			System.out.print(sqlLocation);
+			sqlLocation = locationName.get(locationsBox.getSelectedIndex()-1);
+			sqlLocation = " Location ='"+ sqlLocation + "'";
+		}
+		else{
+			sqlLocation="";
+		}
+	}
+
+	void comboBox(JComboBox brandsBox){
+		if(comboBox_1.getSelectedIndex() > 0 && brandsBox.getSelectedIndex() > 0)
+		{
+			
+			sqlModel = modelName.get(brandsBox.getSelectedIndex());
+			sqlModel = "Model='"+sqlModel +"'";
+		}
+		else
+		{
+			sqlModel = "";
+		}
+		
+	}
+}
